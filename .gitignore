@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.pkl
+build/
+dist/
+*.egg-info/
+cleanenv/
+dataset/
+models/
+.vscode/
