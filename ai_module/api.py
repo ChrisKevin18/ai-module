@@ -1,6 +1,6 @@
 import os
 import logging
-
+from multiprocessing import freeze_support
 from .logger import setup_logger
 from .face_utils import capture_faces_internal, train_faces_internal
 from .server import main
@@ -27,6 +27,8 @@ def run(camera=None, threshold=0.6, ppe=True, auto_setup=True):
         ppe: enable PPE detection
         auto_setup: auto capture + train if model not found
     """
+
+    freeze_support()
 
     setup_logger()
 
