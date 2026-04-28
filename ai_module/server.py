@@ -1,7 +1,7 @@
 import cv2
 import logging
 import threading
-from multiprocessing import Process
+
 from queue import Queue
 
 from ai_module.face_model import FaceRecognizer
@@ -117,15 +117,16 @@ def main(camera=None, threshold=0.6, ppe=True):
     else:
         sources = get_all_sources()
 
-    processes = []
+    threads = []
 
     for i, src in enumerate(sources):
-        p = Process(
+        t = threading.Thread(
             target=process_camera,
-            args=(src, i, threshold, ppe)
+            args=(src, i, threshold, ppe),
+            daemon=True
         )
-        p.start()
-        processes.append(p)
+        t.start()
+        threads.append(t)
 
-    for p in processes:
-        p.join()
+    for t in threads:
+        t.join()
