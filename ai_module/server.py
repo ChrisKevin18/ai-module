@@ -9,7 +9,11 @@ from ai_module.safety_model import SafetyDetector
 from ai_module.camera import CameraStream, get_all_sources
 from ai_module.config import *
 
+# =====================================
+# GLOBAL CALLBACK
+# =====================================
 
+DETECTION_CALLBACK = None
 # -------- WORKER THREAD -------- #
 
 def inference_worker(frame_queue, result_queue, face, safety, ppe):
@@ -28,7 +32,71 @@ def inference_worker(frame_queue, result_queue, face, safety, ppe):
 # -------- CAMERA PROCESS -------- #
 
 def process_camera(source, cam_id, threshold, ppe):
+    conf = score * 10
+    color = (0,255,0) if name != "Unknown" else (0,0,255)
+            # =====================================
+            # EMIT DETECTION
+            # =====================================
 
+    if name != "Unknown":
+
+                if DETECTION_CALLBACK:
+
+                    try:
+
+                        DETECTION_CALLBACK({
+
+                            "worker_name": name,
+
+                            "helmet": cached_safety.get(
+
+                                "helmet",
+
+                                False
+
+                            ),
+
+                            "vest": cached_safety.get(
+
+                                "vest",
+
+                                False
+
+                            ),
+
+                            "gloves": cached_safety.get(
+
+                                "gloves",
+
+                                False
+
+                            ),
+
+                            "boots": cached_safety.get(
+
+                                "boots",
+
+                                False
+
+                            ),
+
+                            "goggles": cached_safety.get(
+
+                                "goggles",
+
+                                False
+
+                            )
+
+                        })
+
+                    except Exception as e:
+
+                        logging.error(
+
+                            f"CALLBACK ERROR: {e}"
+
+                        )    
     logging.info(f"[CAM {cam_id}] Starting...")
 
     cam = CameraStream(source)

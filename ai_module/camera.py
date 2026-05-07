@@ -19,13 +19,13 @@ def get_camera_source():
             print(f"[INFO] Using Local Camera {i}")
             return i
 
-    # 2️⃣ Try RTSP (best for CCTV / long distance)
+    # 2️⃣ Try RTSP 
     rtsp = os.environ.get("RTSP_URL")
     if rtsp:
         print("[INFO] Using RTSP Camera (TCP)")
         return rtsp
 
-    # 3️⃣ Try HTTP IP Camera (mobile apps, etc.)
+    # 3️⃣ Try HTTP IP Camera 
     ip = os.environ.get("IP_CAMERA_URL")
     if ip:
         print("[INFO] Using IP Camera (HTTP)")
@@ -46,7 +46,7 @@ def get_all_sources():
             print(f"[INFO] Found Local Camera {i}")
             sources.append(i)
 
-    # 2️⃣ RTSP cameras (comma separated)
+    # 2️⃣ RTSP cameras 
     rtsp_list = os.environ.get("RTSP_URLS")
     if rtsp_list:
         for url in rtsp_list.split(","):

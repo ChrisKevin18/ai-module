@@ -35,7 +35,7 @@ class SafetyDetector:
             label = self.model.names[cls_id].lower()
             detected.add(label)
 
-            # 🔥 Draw box
+            #Draw box
             x1, y1, x2, y2 = map(int, box.xyxy[0])
             conf = float(box.conf[0])
 
