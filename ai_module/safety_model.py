@@ -3,7 +3,7 @@ from ultralytics import YOLO
 import cv2
 
 class SafetyDetector:
-    def __init__(self, conf=0.4, imgsz=320):
+    def __init__(self, conf=0.3, imgsz=640):
 
         model_path = os.path.join(os.path.dirname(__file__), "best.pt")
 
