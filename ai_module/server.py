@@ -6,7 +6,8 @@ from queue import Queue
 
 from ai_module.face_model import FaceRecognizer
 from ai_module.safety_model import SafetyDetector
-from ai_module.camera import CameraStream, get_all_sources
+from ai_module.camera import CameraStream, get_camera_sources
+sources =[get_camera_sources()]
 from ai_module.config import *
 
 # =====================================
@@ -394,7 +395,7 @@ def main(camera=None, threshold=0.6, ppe=True):
     if camera is not None:
         sources = [camera]
     else:
-        sources = get_all_sources()
+        sources = get_camera_sources()
 
     threads = []
 

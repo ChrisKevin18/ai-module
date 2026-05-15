@@ -7,63 +7,80 @@ os.environ["OPENCV_FFMPEG_CAPTURE_OPTIONS"] = "rtsp_transport;tcp"
 
 
 # -------- AUTO DETECT CAMERA -------- #
-
 def get_camera_source():
-    print("[INFO] Detecting camera...")
 
-    # 1️⃣ Try local cameras first
-    for i in range(3):
-        cap = cv2.VideoCapture(i, cv2.CAP_DSHOW)
-        if cap.isOpened():
-            cap.release()
-            print(f"[INFO] Using Local Camera {i}")
-            return i
+    print("[INFO] Detecting selected camera source...")
 
-    # 2️⃣ Try RTSP 
-    rtsp = os.environ.get("RTSP_URL")
-    if rtsp:
-        print("[INFO] Using RTSP Camera (TCP)")
-        return rtsp
+    # -----------------------------------
+    # RTSP CAMERA
+    # -----------------------------------
 
-    # 3️⃣ Try HTTP IP Camera 
-    ip = os.environ.get("IP_CAMERA_URL")
-    if ip:
-        print("[INFO] Using IP Camera (HTTP)")
-        return ip
+    rtsp_urls = os.environ.get("RTSP_URLS")
 
-    raise RuntimeError("❌ No camera found")
+    if rtsp_urls:
+
+        first_rtsp = rtsp_urls.split(",")[0].strip()
+
+        print(f"[INFO] Selected RTSP Stream: {first_rtsp}")
+
+        test_cap = cv2.VideoCapture(first_rtsp)
+
+        if not test_cap.isOpened():
+
+            raise RuntimeError(
+                f"❌ Failed to open RTSP stream:\n{first_rtsp}"
+            )
+
+        test_cap.release()
+
+        return first_rtsp
+
+    # -----------------------------------
+    # HTTP/IP CAMERA
+    # -----------------------------------
+
+    ip_urls = os.environ.get("IP_CAMERA_URLS")
+
+    if ip_urls:
+
+        first_ip = ip_urls.split(",")[0].strip()
+
+        print(f"[INFO] Selected IP Camera: {first_ip}")
+
+        test_cap = cv2.VideoCapture(first_ip)
+
+        if not test_cap.isOpened():
+
+            raise RuntimeError(
+                f"❌ Failed to open IP Camera:\n{first_ip}"
+            )
+
+        test_cap.release()
+
+        return first_ip
+
+    # -----------------------------------
+    # LOCAL WEBCAM
+    # -----------------------------------
+
+    webcam_index = 0
+
+    print(f"[INFO] Selected Webcam: {webcam_index}")
+
+    test_cap = cv2.VideoCapture(webcam_index, cv2.CAP_DSHOW)
+
+    if not test_cap.isOpened():
+
+        raise RuntimeError(
+            "❌ Failed to open local webcam"
+        )
+
+    test_cap.release()
+
+    return webcam_index
 
 
 
-def get_all_sources():
-    sources = []
-
-    # 1️⃣ Local cameras
-    for i in range(3):
-        cap = cv2.VideoCapture(i, cv2.CAP_DSHOW)
-        if cap.isOpened():
-            cap.release()
-            print(f"[INFO] Found Local Camera {i}")
-            sources.append(i)
-
-    # 2️⃣ RTSP cameras 
-    rtsp_list = os.environ.get("RTSP_URLS")
-    if rtsp_list:
-        for url in rtsp_list.split(","):
-            print(f"[INFO] Found RTSP: {url}")
-            sources.append(url.strip())
-
-    # 3️⃣ IP cameras
-    ip_list = os.environ.get("IP_CAMERA_URLS")
-    if ip_list:
-        for url in ip_list.split(","):
-            print(f"[INFO] Found IP Camera: {url}")
-            sources.append(url.strip())
-
-    if not sources:
-        raise RuntimeError("❌ No cameras found")
-
-    return sources
 # -------- THREADED CAMERA -------- #
 
 class CameraStream:
